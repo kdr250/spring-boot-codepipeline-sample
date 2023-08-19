@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo start build
+
+      # Spring Bootプロジェクトのビルド（jarの作成）
+      - ./gradlew clean build
+
+      - echo finish build
+
+  post_build:
+    commands:
+      - echo start post build
+
+      # S3にアップロードするファイルを所定のディレクトリにコピー
+      - mkdir artifacts
+      - cp build/libs/demo-0.0.1-SNAPSHOT.jar artifacts
+      - cp appspec.yml artifacts
+      - cp restart.sh artifacts
+
+      - echo finish post build.
+
+artifacts:
+  # S3にアップロードするファイルを指定
+  files:
+    - demo-0.0.1-SNAPSHOT.jar
+    - appspec.yml
+    - restart.sh
+  # ベースディレクトリ
+  base-directory: artifacts
